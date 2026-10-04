@@ -24,7 +24,7 @@ import { PrismaModule } from './prisma/prisma.module';
         MAIL_FROM: Joi.string().allow('').optional(),
       }),
     }),
-    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 10 }]),
+    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 120 }]),
     PrismaModule,
     AuthModule,
     InvitationsModule,
