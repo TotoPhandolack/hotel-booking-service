@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { SystemRole } from '@prisma/client';
+import { SystemRole } from '../generated/prisma/enums';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { SystemRoles } from '../common/decorators/system-roles.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
