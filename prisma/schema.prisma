@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum SystemRole {
+  USER
+  SUPERADMIN
+}
+
+enum MembershipRole {
+  OWNER
+  STAFF
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum BranchStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String
+  passwordHash String
+  systemRole   SystemRole @default(USER)
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  memberships       TenantMembership[]
+  createdInvitations OwnerInvitation[] @relation("InvitationCreator")
+
+  @@index([systemRole, isActive])
+}
+
+model Tenant {
+  id        String       @id @default(cuid())
+  name      String
+  slug      String       @unique
+  status    TenantStatus @default(ACTIVE)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  memberships TenantMembership[]
+  branches    Branch[]
+
+  @@index([status])
+}
+
+model TenantMembership {
+  id        String         @id @default(cuid())
+  tenantId  String
+  userId    String
+  role      MembershipRole
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  tenant       Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  branchAccess StaffBranchAssignment[]
+
+  @@unique([tenantId, userId])
+  @@unique([id, tenantId])
+  @@index([userId, role])
+}
+
+model Branch {
+  id        String       @id @default(cuid())
+  tenantId  String
+  name      String
+  slug      String
+  status    BranchStatus @default(ACTIVE)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  tenant      Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  staffAccess StaffBranchAssignment[]
+
+  @@unique([tenantId, slug])
+  @@unique([id, tenantId])
+  @@index([tenantId, status])
+}
+
+model StaffBranchAssignment {
+  id           String   @id @default(cuid())
+  tenantId     String
+  membershipId String
+  branchId     String
+  createdAt    DateTime @default(now())
+
+  membership TenantMembership @relation(fields: [membershipId, tenantId], references: [id, tenantId], onDelete: Cascade)
+  branch     Branch           @relation(fields: [branchId, tenantId], references: [id, tenantId], onDelete: Cascade)
+
+  @@unique([membershipId, branchId])
+  @@index([tenantId, branchId])
+}
+
+model OwnerInvitation {
+  id               String    @id @default(cuid())
+  email            String
+  ownerName        String
+  tenantName       String
+  tenantSlug       String
+  tokenHash        String    @unique
+  expiresAt        DateTime
+  acceptedAt       DateTime?
+  createdByUserId  String
+  createdAt        DateTime  @default(now())
+
+  createdBy User @relation("InvitationCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+
+  @@index([email, expiresAt])
+}
