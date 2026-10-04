@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import 'reflect-metadata';
-import { PrismaClient, SystemRole } from '@prisma/client';
+import { PrismaClient } from '../generated/prisma/client';
+import { SystemRole } from '../generated/prisma/enums';
+import { PrismaNeon } from '@prisma/adapter-neon';
 import { hash } from 'bcryptjs';
 
 async function bootstrapSuperadmin(): Promise<void> {
@@ -14,7 +16,9 @@ async function bootstrapSuperadmin(): Promise<void> {
     throw new Error('The bootstrap password must contain between 12 and 72 characters');
   }
 
-  const prisma = new PrismaClient();
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) throw new Error('Set DATABASE_URL before bootstrapping the superadmin');
+  const prisma = new PrismaClient({ adapter: new PrismaNeon({ connectionString }) });
   try {
     const passwordHash = await hash(password, 12);
     await prisma.$transaction(async (tx) => {

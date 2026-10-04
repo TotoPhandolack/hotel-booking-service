@@ -5,7 +5,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { MembershipRole } from '@prisma/client';
+import { MembershipRole } from '../../generated/prisma/enums';
 import { AuthenticatedRequest } from '../interfaces/authenticated-request.interface';
 import { PrismaService } from '../../prisma/prisma.service';
 

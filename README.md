@@ -5,20 +5,20 @@ NestJS REST API for a multi-tenant guesthouse management and booking platform.
 ## Stack
 
 - NestJS 11 and TypeScript
-- Prisma ORM 6 with Neon Postgres
+- Prisma ORM 7.10 with the Neon Postgres driver adapter
 - JWT access tokens and bcryptjs password hashing
 - Resend for owner invitation emails
 
 ## Requirements
 
-- Node.js 20.11 or later
+- Node.js 20.19 or later
 - npm
 - A Neon Postgres database
 
 ## Local setup
 
 1. Install dependencies: `npm install`
-2. Copy `.env.example` to `.env` and set the values. Use Neon's pooled connection string for `DATABASE_URL` and its direct connection string for `DIRECT_URL`.
+2. Run `cp .env.example .env`, then set the values in `.env`. Nest loads `.env`; it does not load `.env.example`. Use Neon's pooled connection string for `DATABASE_URL` and its direct connection string for `DIRECT_URL`; Prisma Client uses the pooled URL while Prisma Migrate reads `DIRECT_URL` from `prisma.config.ts`. The `.env` file is ignored by Git; never put credentials in `.env.example`.
 3. Generate the Prisma client: `npm run prisma:generate`
 4. Apply the initial database migration: `npm run prisma:migrate:dev`
 5. Set `BOOTSTRAP_SUPERADMIN_EMAIL` and `BOOTSTRAP_SUPERADMIN_PASSWORD` in the shell, then run `npm run bootstrap:superadmin` once. The command refuses to create a second superadmin.

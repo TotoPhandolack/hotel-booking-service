@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { MembershipRole, SystemRole } from '@prisma/client';
+import { MembershipRole, SystemRole } from '../../generated/prisma/enums';
 
 export interface AuthenticatedUser {
   id: string;

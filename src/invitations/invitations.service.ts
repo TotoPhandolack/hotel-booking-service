@@ -5,7 +5,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common';
-import { MembershipRole, SystemRole } from '@prisma/client';
+import { MembershipRole, SystemRole } from '../generated/prisma/enums';
 import { hash } from 'bcryptjs';
 import { createHash, randomBytes } from 'node:crypto';
 import { PrismaService } from '../prisma/prisma.service';
