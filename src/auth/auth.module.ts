@@ -26,6 +26,12 @@ import { BranchAssignmentGuard } from '../common/guards/branch-assignment.guard'
     TenantMembershipGuard,
     BranchAssignmentGuard,
   ],
-  exports: [JwtAuthGuard, SystemRolesGuard, TenantMembershipGuard, BranchAssignmentGuard],
+  exports: [
+    JwtModule,
+    JwtAuthGuard,
+    SystemRolesGuard,
+    TenantMembershipGuard,
+    BranchAssignmentGuard,
+  ],
 })
 export class AuthModule {}
